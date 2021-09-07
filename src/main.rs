@@ -1,6 +1,7 @@
 use clap::{App, SubCommand};
 
 mod init;
+mod model;
 fn main() {
     let matches = App::new("Simple")
         .subcommand(SubCommand::with_name("init"))
@@ -15,9 +16,11 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use std::{path::Path, process::Command};
+    use std::{fs, path::Path, process::Command};
 
     use assert_cmd::prelude::{CommandCargoExt, OutputAssertExt};
+
+    use crate::model::SimpleConfig;
 
     #[test]
     fn init_test_good_arg() {
@@ -26,12 +29,43 @@ mod tests {
         cmd.arg("init");
         cmd.assert().success();
 
-        assert!(Path::new("./.simple/simple.toml").exists());
+        cleanup();
+    }
+
+    #[test]
+    fn init_test_good_arg_file_created() {
+        let mut cmd = Command::cargo_bin("simple").unwrap();
+
+        cmd.arg("init");
+        cmd.assert().success();
+        let path = "./.simple/simple.toml";
+
+        assert!(Path::new(path).exists());
 
         cleanup();
     }
 
-    fn cleanup(){
+    #[test]
+    fn init_test_good_arg_file_contents_validated() {
+        let mut cmd = Command::cargo_bin("simple").unwrap();
+
+        cmd.arg("init");
+        cmd.assert().success();
+
+        let path = "./.simple/simple.toml";
+
+        assert!(Path::new(path).exists());
+
+        let data = fs::read_to_string(path).unwrap();
+        let test_object: SimpleConfig = toml::from_str(data.as_str()).unwrap();
+
+        assert_eq!(test_object.name, "test");
+        assert!(test_object.repos.is_none());
+
+        cleanup();
+    }
+
+    fn cleanup() {
         let _ = std::fs::remove_dir_all("./.simple");
     }
 

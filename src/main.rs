@@ -1,5 +1,6 @@
 use clap::{App, SubCommand};
 
+mod init;
 fn main() {
     let matches = App::new("Simple")
         .subcommand(SubCommand::with_name("init"))
@@ -7,14 +8,14 @@ fn main() {
         .get_matches();
 
     match matches.subcommand_name() {
-        Some("init") => println!("Init simple repo"),
-        _ => panic!("Pass a valid command"),
+        Some("init") => init::init_simple(),
+        _ => panic!("Subcommand not found"),
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::process::Command;
+    use std::{path::Path, process::Command};
 
     use assert_cmd::prelude::{CommandCargoExt, OutputAssertExt};
 
@@ -23,9 +24,15 @@ mod tests {
         let mut cmd = Command::cargo_bin("simple").unwrap();
 
         cmd.arg("init");
-        cmd.assert()
-            .success()
-            .stdout(predicates::str::contains("Init simple repo"));
+        cmd.assert().success();
+
+        assert!(Path::new("./.simple/simple.toml").exists());
+
+        cleanup();
+    }
+
+    fn cleanup(){
+        let _ = std::fs::remove_dir_all("./.simple");
     }
 
     #[test]

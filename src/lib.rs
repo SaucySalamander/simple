@@ -23,7 +23,7 @@ pub fn run_simple_repo() {
 
     match matches.subcommand_name() {
         Some("init") => core::init::init_simple(matches.subcommand_matches("init").unwrap()),
-        Some("add") => core::io::add_source_repository(),
+        // Some("add") => core::io::add_source_repository(),
         _ => panic!("Subcommand not found"),
     }
 }

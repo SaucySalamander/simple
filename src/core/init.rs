@@ -1,6 +1,6 @@
 use std::fs::File;
-use crate::model::SimpleConfig;
 use std::io::Write;
+use crate::core::SimpleConfig;
 
 pub fn init_simple() {
     create_simple_directory();

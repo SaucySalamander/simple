@@ -1,3 +1,5 @@
+pub mod init;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]

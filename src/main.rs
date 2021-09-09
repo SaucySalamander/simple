@@ -1,7 +1,7 @@
 use clap::{App, SubCommand};
 
-mod init;
-mod model;
+mod core;
+
 fn main() {
     let matches = App::new("Simple")
         .subcommand(SubCommand::with_name("init"))
@@ -9,18 +9,17 @@ fn main() {
         .get_matches();
 
     match matches.subcommand_name() {
-        Some("init") => init::init_simple(),
+        Some("init") => core::init::init_simple(),
         _ => panic!("Subcommand not found"),
     }
 }
 
 #[cfg(test)]
 mod tests {
+
     use std::{fs, path::Path, process::Command};
-
     use assert_cmd::prelude::{CommandCargoExt, OutputAssertExt};
-
-    use crate::model::SimpleConfig;
+    use crate::core::SimpleConfig;
 
     #[test]
     fn init_test_good_arg() {
